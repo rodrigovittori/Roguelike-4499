@@ -7,29 +7,36 @@ packs de assets: https://kenney.nl/assets/series:Tiny?sort=update (LO TIENEN QUE
 pack escalado (drive del profe): https://drive.google.com/drive/folders/19obh4TK0RIBWlXOsaOq9uJ287jUHuLTn?usp=drive_link
 
 > Página para redimensionar assets https://imageresizer.com/bulk-resize/
-============================================================================================================================
-Version actual: [M9.L1] - Actividad #3: "Bucles anidados"
-Objetivo: Implementar un sistema de bucles anidados que recorra nuestro mapa y determine el valor de cada celda
 
-NOTA: Ya lo implementamos en la tarea anterior pero vamos a migrar esa lógica de nuestro draw() a una función especial
-      llamada dibujar_mapa(mapa, mostrar_texto)
+> Link del repositorio en GitHub: https://github.com/rodrigovittori/Roguelike-4499/
+============================================================================================================================
+Version actual: [M9.L1] - Actividad #4: "Visualización del mapa en la pantalla"
+Objetivo: En función del valor de cada celda, renderizar el terreno correspondiente
 
 PASOS:
 
-1º) Modificar nuestro draw()
-2º) Crear nuestra Función dibujar_mapa(mapa) que convierte los datos de una tabla (mapa) en los gráficos de nuestro nivel
-3º) Implementar cambio de mapas desde on_key_down()
+1º) Crear una paleta_terrenos = [] con los Actores que creamos previamente
+2º) Modificar dibujar_mapa() para que dibuje cada casilla según el valor correspondiente de la paleta
+
+NOTA: El texto en el for debe volver a center (top left no queda bien)
 
 """
 
 # Ventana de juego hecha de celdas
 celda = Actor('border') # Celda que voy a utilizar como referencia para mi mapa
 """ ******************************************************************* """
-# Paleta de terrenos:
-pared =  Actor("border") # 0: Pared de bloques
-piso =   Actor("floor")  # 1: Suelo liso (sin decoración)
-crack =  Actor("crack")  # 2: Suelo resquebrajado/quebradizo
-huesos = Actor("bones")  # 3: Suelo con una pilita de huesos
+paleta_terrenos = [] # Paleta de terrenos
+pared = Actor("border") # 0: Pared de bloques
+paleta_terrenos.append(pared) 
+
+piso = Actor("floor")   # 1: Suelo liso (sin decoración)
+paleta_terrenos.append(piso)
+
+crack =  Actor("crack") # 2: Suelo resquebrajado/quebradizo
+paleta_terrenos.append(crack)
+
+huesos = Actor("bones") # 3: Suelo con una pilita de huesos
+paleta_terrenos.append(huesos)
 """ ******************************************************************* """
 cant_celdas_ancho = 7 # Ancho del mapa (en celdas)
 cant_celdas_alto =  7 # Altura del mapa (en celdas)
@@ -82,14 +89,16 @@ def dibujar_mapa(mapa, mostrar_texto):
 
       # https://pygame-zero.readthedocs.io/en/stable/builtins.html?highlight=anchor#positioning-actors
 
-      """ NOTA: Yo podría multiplicar SIEMPRe por el tamaño de celda, PERO si hacemos eso,
+      """ NOTA: Yo podría multiplicar SIEMPRE por el tamaño de celda, PERO si hacemos eso,
                 ¿Cómo me daría cuenta si alguna casilla me quedó mal escalada? """
 
-      # IMPLEMENTAR PALETA DE TERRENOS AQUÍ
+      paleta_terrenos[mapa[fila][columna]].left =  pared.width * columna
+      paleta_terrenos[mapa[fila][columna]].top  = pared.height * fila
+      paleta_terrenos[mapa[fila][columna]].draw()
         
       if (mostrar_texto):
           screen.draw.text( str(mapa_actual[fila][columna]),
-                            topleft=( (celda.width * columna), (celda.height * fila) ),
+                            center=( ( (celda.width * columna) + int(celda.width/2) ), ( (celda.height * fila) + int(celda.height/2)) ),
                             color="black", fontsize=32 )
 
 """   #####################
