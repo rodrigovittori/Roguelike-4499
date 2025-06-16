@@ -10,18 +10,14 @@ pack escalado (drive del profe): https://drive.google.com/drive/folders/19obh4TK
 
 > Link del repositorio en GitHub: https://github.com/rodrigovittori/Roguelike-4499/
 ============================================================================================================================
-Version actual: [M9.L1] - Actividad #5: "Atributos"
-Objetivo: Familiarizarnos con los atributos agregando salud y ataque a nuestro personaje
-          > Creamos nuestro personaje como un objeto Actor() con sus respectivos atributos y los mostramos por pantalla
-
-NOTA: Modificar la llamada a dibujar_mapa() para que NO muestre los valores de cada casilla y eliminar texto de ventana
+Version actual: [M9.L1] - Actividad #6: "Desplazamiento a través de las celdas"
+Objetivo: Implementar nuestro sistema de movimiento (por casillas/por turnos)
 
 PASOS:
-1º) Creamos Actor() personaje
-2º) Le damos sus atributos (salud, ataque)
-3º) Modificar nuestra función draw() p/ mostrarlos
+1º) Implementar el despalzamiento entre celdas por turnos con on_key_down(key)
 
-NOTA: En el próximo ejercicio implementaremos el despalzamiento entre celdas por turnos con on_key_down(key)
+NOTA 1: No olvidar el cambio de sprite
+NOTA 2: No olvidar las notas de ejercicios adicionales
 """
 
 # Ventana de juego hecha de celdas
@@ -40,6 +36,9 @@ paleta_terrenos.append(crack)
 huesos = Actor("bones") # 3: Suelo con una pilita de huesos
 paleta_terrenos.append(huesos)
 """ ******************************************************************* """
+
+# NOTA: El cambio de tamaño de las actividades Nº 9 y 10 se hace aquí
+
 cant_celdas_ancho = 7 # Ancho del mapa (en celdas)
 cant_celdas_alto =  7 # Altura del mapa (en celdas)
 
@@ -130,10 +129,16 @@ def draw():
     screen.draw.text(("🗡️: " + str(personaje.ataque)), midright=((WIDTH - 15), 36), color = 'white', fontsize = 16)
 
 def on_key_down(key):
-    global mapa_actual
+    if ((keyboard.right or keyboard.d)):
+        personaje.x += celda.width
+        personaje.image = "stand" # xq stand mira a la dcha
     
-    if key == keys.SPACE:
-        if mapa_actual == mapa:
-            mapa_actual = mapa_2
-        else:
-            mapa_actual = mapa
+    elif ((keyboard.left or keyboard.a)):
+        personaje.x -= celda.width
+        personaje.image = "left" # xq mira a la izq
+        
+    elif ((keyboard.down or keyboard.s)):
+        personaje.y += celda.height
+    
+    elif ((keyboard.up or keyboard.w)):
+        personaje.y -= celda.height
