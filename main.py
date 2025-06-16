@@ -10,16 +10,18 @@ pack escalado (drive del profe): https://drive.google.com/drive/folders/19obh4TK
 
 > Link del repositorio en GitHub: https://github.com/rodrigovittori/Roguelike-4499/
 ============================================================================================================================
-Version actual: [M9.L1] - Actividad #4: "Visualización del mapa en la pantalla"
-Objetivo: En función del valor de cada celda, renderizar el terreno correspondiente
+Version actual: [M9.L1] - Actividad #5: "Atributos"
+Objetivo: Familiarizarnos con los atributos agregando salud y ataque a nuestro personaje
+          > Creamos nuestro personaje como un objeto Actor() con sus respectivos atributos y los mostramos por pantalla
+
+NOTA: Modificar la llamada a dibujar_mapa() para que NO muestre los valores de cada casilla y eliminar texto de ventana
 
 PASOS:
+1º) Creamos Actor() personaje
+2º) Le damos sus atributos (salud, ataque)
+3º) Modificar nuestra función draw() p/ mostrarlos
 
-1º) Crear una paleta_terrenos = [] con los Actores que creamos previamente
-2º) Modificar dibujar_mapa() para que dibuje cada casilla según el valor correspondiente de la paleta
-
-NOTA: El texto en el for debe volver a center (top left no queda bien)
-
+NOTA: En el próximo ejercicio implementaremos el despalzamiento entre celdas por turnos con on_key_down(key)
 """
 
 # Ventana de juego hecha de celdas
@@ -46,6 +48,18 @@ HEIGHT = celda.height * cant_celdas_alto  # Alto de la ventana (en píxeles)
 
 TITLE = "Rogue-like: Mazmorra Maldita" # Título de la ventana de juego
 FPS = 60 # Número de fotogramas por segundo
+
+# Personaje:
+personaje = Actor("stand", size=(50, 50))
+
+# Nota: si quieren llevar control de la vida, pueden crear dos atributos: "salud_max" y "salud_actual"
+# personaje.salud = 100
+personaje.salud_max = 100
+personaje.salud_act = personaje.salud_max # El PJ empieza con la vida llena
+
+# Nota: si quieren hacer más interesante el combate pueden agregar atributos para el valor mínimo de ataque y el máximo
+# (también pueden implementar un sistema de miss y critical hits) Por ejemplo ataque de 2-5 de daño y crítico 2xMAX = 10
+personaje.ataque = 5
 
 ################## MAPAS ##################
 
@@ -107,12 +121,13 @@ def dibujar_mapa(mapa, mostrar_texto):
 
 def draw():
     screen.fill((200,200,200))
-    dibujar_mapa(mapa = mapa_actual, mostrar_texto = True)
+    dibujar_mapa(mapa = mapa_actual, mostrar_texto = False)
+    personaje.draw()
 
-    # Borrar después de la próxima tarea:
-    screen.draw.text(("  Ventana de " + str(cant_celdas_ancho) + " x " + str(cant_celdas_alto) + "  "), center=(WIDTH/2, int(celda.height /2)), color = "white", background = "black", fontsize = int(celda.height /2))
-
-    screen.draw.text("Pulse [Espacio] para alternar el diseño del mapa", center=(WIDTH/2, ((cant_celdas_alto * celda.height) - int(celda.height /2))), color = "white", background = "black", fontsize = int(celda.height /3))
+    # Mostramos valores personaje:
+    #screen.draw.text(("❤️: " + str(personaje.salud)), midright=((WIDTH - 15), 14), color = 'white', fontsize = 16)
+    screen.draw.text(("❤️: " + str(personaje.salud_act) + "/" + str(personaje.salud_max)), midright=((WIDTH - 15), 14), color = 'white', fontsize = 16)
+    screen.draw.text(("🗡️: " + str(personaje.ataque)), midright=((WIDTH - 15), 36), color = 'white', fontsize = 16)
 
 def on_key_down(key):
     global mapa_actual
