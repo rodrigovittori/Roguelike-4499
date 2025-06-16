@@ -10,14 +10,13 @@ pack escalado (drive del profe): https://drive.google.com/drive/folders/19obh4TK
 
 > Link del repositorio en GitHub: https://github.com/rodrigovittori/Roguelike-4499/
 ============================================================================================================================
-Version actual: [M9.L1] - Actividad #6: "Desplazamiento a través de las celdas"
-Objetivo: Implementar nuestro sistema de movimiento (por casillas/por turnos)
+Version actual: [M9.L1] - Actividad #7 (Adicional): "mantenerse dentro de los límites"
+Objetivo: Agregar condiciones de restricción al mov. del PJ para que no salga de la pantalla
 
 PASOS:
-1º) Implementar el despalzamiento entre celdas por turnos con on_key_down(key)
+1º) Modificar el desplazamiento en on_key_down() para que no pueda atravesar las paredes
 
-NOTA 1: No olvidar el cambio de sprite
-NOTA 2: No olvidar las notas de ejercicios adicionales
+NOTA: modificamos para usar el enum "keys" y agregamos soporte numpad
 """
 
 # Ventana de juego hecha de celdas
@@ -129,16 +128,18 @@ def draw():
     screen.draw.text(("🗡️: " + str(personaje.ataque)), midright=((WIDTH - 15), 36), color = 'white', fontsize = 16)
 
 def on_key_down(key):
-    if ((keyboard.right or keyboard.d)):
+    if ((keyboard.right or keyboard.d) and (personaje.x < (WIDTH - celda.width * 2))):
+        # ¿Xq 2?: Una (a la que me voy a desplazar) y otra (por la pared, que NO puedo atravesar)
         personaje.x += celda.width
         personaje.image = "stand" # xq stand mira a la dcha
     
-    elif ((keyboard.left or keyboard.a)):
+    elif ((keyboard.left or keyboard.a) and (personaje.x > (celda.width * 2))):
         personaje.x -= celda.width
         personaje.image = "left" # xq mira a la izq
         
-    elif ((keyboard.down or keyboard.s)):
+    elif ((keyboard.down or keyboard.s) and (personaje.y < HEIGHT - celda.height * 2)):
+        # A partir de la próxima actividad (9) deberían ser 3 celdas: a la que me muevo, la pared y el espacio para datos
         personaje.y += celda.height
     
-    elif ((keyboard.up or keyboard.w)):
+    elif ((keyboard.up or keyboard.w) and (personaje.y > (celda.height * 2))):
         personaje.y -= celda.height
