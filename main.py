@@ -10,19 +10,12 @@ pack escalado (drive del profe): https://drive.google.com/drive/folders/19obh4TK
 
 > Link del repositorio en GitHub: https://github.com/rodrigovittori/Roguelike-4499/
 ============================================================================================================================
-Version actual: [M9.L2] - Actividades Nº 5 "Aparición de las bonificaciones"
-Objetivo del ejercicio: Agregar mecánicas de bonus, su spawn, mostrarlas en pantalla
+Version actual: [M9.L2] - Actividad #6: "Recolectando bonificaciones"
+Objetivo del ejercicio: Agregar colisiones de los bonus e implementamos sus efectos
 
-NOTA: Todavía SEGUIMOS sin game-over (somos inmortales :D)
+NOTA: La PRÓXIMA TAREA es el game-over
 
-NOTA 2: Las colisiones con los bonus se programan en la SIGUIENTE tarea
-
-Pasos:
-
-#1: Crear una nueva lista para los bonus
-#2: Durante la creación de enemigos vamos a asignarles un valor de bonus que dropearán tras ser derrotados
-#3: Agregar un bucle en draw para dibujar los bonus en pantalla
-#4: Al derrotar a un enemigo, spawnearemos el bonus que se le asignó al crearlo
+Pasos: ** Modificar nuestra función de colisiones **
 """
 
 import random
@@ -63,7 +56,7 @@ personaje.salud_act = personaje.salud_max # El PJ empieza con la vida llena
 
 # Nota: si quieren hacer más interesante el combate pueden agregar atributos para el valor mínimo de ataque y el máximo
 # (también pueden implementar un sistema de miss y critical hits) Por ejemplo ataque de 2-5 de daño y crítico 2xMAX = 10
-personaje.ataque = 5
+personaje.ataque = 20
 
 lista_bonus = []
 tipos_bonus = [None, "heart", "sword"]
@@ -98,7 +91,7 @@ while (len(lista_enemigos) < CANT_ENEMIGOS_A_SPAWNEAR):
         # Si NO hay conflicto: randomizamos salud, ataque y lo agregamos a lista_enemigos
         nvo_enemigo.salud = random.randint(10, 20)
         nvo_enemigo.ataque = random.randint(5, 10)
-        nvo_enemigo.bonus= random.randint(0, (len(tipos_bonus) - 1)) # 0: NADA, 1: curación, 2: espada
+        nvo_enemigo.bonus= random.randint(1, (len(tipos_bonus) - 1)) # 0: NADA, 1: curación, 2: espada
         
         """ FINALMENTE, lo agregamos a la lista """
         lista_enemigos.append(nvo_enemigo)
@@ -215,3 +208,25 @@ def on_key_down(key):
           lista_enemigos.remove(enemigo_atacado)
 
           # To-do: modificar la casilla / spawnear una pila de huesitos donde muere el esqueleto
+    #############################################################################################
+    else: # Si NO hay colisión con enemigos...
+      
+      """ >>> COLISIONES CON BONUS <<< """
+
+      if (personaje.collidelist(lista_bonus) != -1):
+
+          # identificamos el bonus que hemos encontrado:
+          bonus_encontrado = lista_bonus[personaje.collidelist(lista_bonus)]
+
+          if (bonus_encontrado.image == "heart") and (personaje.salud_act != personaje.salud_max):
+              # Si es una CURACIÓN:
+              personaje.salud_act += 15
+              personaje.salud_act = min(personaje.salud_act, personaje.salud_max)
+              lista_bonus.remove(bonus_encontrado) # Ya aplicado el efecto, eliminamos el bonus
+          
+          elif (bonus_encontrado.image == "sword"):
+              # Si es un bonus de ATAQUE:
+              personaje.ataque += 5
+              lista_bonus.remove(bonus_encontrado) # Ya aplicado el efecto, eliminamos el bonus
+
+          # NOTA: acá también pueden optar entre remove() o pop() para eliminar
